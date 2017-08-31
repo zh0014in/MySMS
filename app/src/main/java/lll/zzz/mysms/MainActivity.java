@@ -1,5 +1,6 @@
 package lll.zzz.mysms;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
@@ -7,28 +8,45 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.*;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import static android.R.attr.duration;
+import static android.R.attr.id;
+import static android.R.id.message;
+import static android.provider.AlarmClock.EXTRA_MESSAGE;
 
 public class MainActivity extends AppCompatActivity {
 
+    private Map<String, String> smsList = new HashMap<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        getSmsList();
+        MyAdapter adapter = new MyAdapter(smsList);
+
+        ListView listView = (ListView) findViewById(R.id.mobile_list);
+        listView.setAdapter(adapter);
+
     }
 
     public void onClickBtn(View v)
     {
-    ExportSms();
+        Intent intent = new Intent(this, SmsListActivity.class);
+        startActivity(intent);
     }
 
-    private void ExportSms(){
+    private  void getSmsList(){
         // public static final String INBOX = "content://sms/inbox";
 // public static final String SENT = "content://sms/sent";
 // public static final String DRAFT = "content://sms/draft";
@@ -40,59 +58,12 @@ public class MainActivity extends AppCompatActivity {
                 for(int idx=0;idx<cursor.getColumnCount();idx++)
                 {
                     msgData += " " + cursor.getColumnName(idx) + ":" + cursor.getString(idx);
+                    smsList.put(cursor.getColumnName(idx), cursor.getString(idx));
                 }
-
             } while (cursor.moveToNext());
-
-            // use msgData
-            if(isExternalStorageWritable()){
-                File folder = getSmsStorageDir("sms");
-                try {
-                    File file = new File(folder, "sms.txt");
-                    FileOutputStream stream = new FileOutputStream(file);
-                    try {
-                        stream.write(msgData.getBytes());
-                    } catch (IOException e) {
-                        Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                    } finally {
-                        Toast.makeText(getApplicationContext(), "exported", Toast.LENGTH_SHORT).show();
-                        stream.close();
-                    }
-                }catch (IOException e){
-                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            }
         } else {
             // empty box, no SMS
         }
     }
 
-    /* Checks if external storage is available for read and write */
-    public boolean isExternalStorageWritable() {
-        String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-            return true;
-        }
-        return false;
-    }
-
-    /* Checks if external storage is available to at least read */
-    public boolean isExternalStorageReadable() {
-        String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state) ||
-                Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
-            return true;
-        }
-        return false;
-    }
-
-    public File getSmsStorageDir(String smsFileName) {
-        // Get the directory for the user's public pictures directory.
-        File file = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_DOWNLOADS), smsFileName);
-        if (!file.mkdirs()) {
-
-        }
-        return file;
-    }
 }
