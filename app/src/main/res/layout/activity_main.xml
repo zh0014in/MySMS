@@ -6,12 +6,9 @@
     android:layout_height="match_parent"
     tools:context="lll.zzz.mysms.MainActivity">
 
-    <Button
-        android:id="@+id/exportButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="onClickBtn"
-        android:text="Export"
-        tools:layout_editor_absoluteX="146dp"
-        tools:layout_editor_absoluteY="210dp" />
+    <ListView
+        android:id="@+id/list_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
 </android.support.constraint.ConstraintLayout>

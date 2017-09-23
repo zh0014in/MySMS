@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         getSmsList();
         MyAdapter adapter = new MyAdapter(smsList);
 
-        ListView listView = (ListView) findViewById(R.id.mobile_list);
+        ListView listView = (ListView) findViewById(R.id.list_view);
         listView.setAdapter(adapter);
 
     }
@@ -48,8 +48,8 @@ public class MainActivity extends AppCompatActivity {
 
     private  void getSmsList(){
         // public static final String INBOX = "content://sms/inbox";
-// public static final String SENT = "content://sms/sent";
-// public static final String DRAFT = "content://sms/draft";
+        // public static final String SENT = "content://sms/sent";
+        // public static final String DRAFT = "content://sms/draft";
         Cursor cursor = getContentResolver().query(Uri.parse("content://sms/inbox"), null, null, null, null);
 
         if (cursor.moveToFirst()) { // must check the result to prevent exception
